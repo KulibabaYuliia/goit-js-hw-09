@@ -12,7 +12,7 @@ formEl.addEventListener('submit', e => {
   const delayN = Number(delayEl.value);
   const stepN = Number(stepEl.value);
 
-  for (i = 1; i <= amountN; i += 1) {
+  for (let i = 1; i <= amountN; i += 1) {
     let delays = delayN + stepN * (i - 1);
 
     createPromise(i, delays)
