@@ -25,7 +25,7 @@ flatpickr(flatpickrEl, {
       startBtn.removeAttribute('disabled');
 
       startBtn.addEventListener('click', () => {
-        timerId = setInterval(() => {
+        const timerId = setInterval(() => {
           const difference =
             Date.parse(selectedDates[0]) - Date.parse(new Date());
           const differenceObj = convertMs(difference);
