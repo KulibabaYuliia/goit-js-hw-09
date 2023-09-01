@@ -4,15 +4,18 @@ import Notiflix from 'notiflix';
 
 const flatpickrEl = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button[data-start]');
+const resetBtn = document.querySelector('button[data-reset]');
 const daysEl = document.querySelector('span[data-days]');
 const hoursEl = document.querySelector('span[data-hours]');
 const minutesEl = document.querySelector('span[data-minutes]');
 const secondsEl = document.querySelector('span[data-seconds]');
-const timerEl = document.querySelector('.timer');
+
+let userTime = 0;
+let timerId = 0;
 
 startBtn.setAttribute('disabled', 'true');
 
-flatpickr(flatpickrEl, {
+let flatpickrTimer = flatpickr(flatpickrEl, {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -23,25 +26,7 @@ flatpickr(flatpickrEl, {
       startBtn.setAttribute('disabled', 'true');
     } else {
       startBtn.removeAttribute('disabled');
-
-      startBtn.addEventListener('click', () => {
-        const timerId = setInterval(() => {
-          const difference =
-            Date.parse(selectedDates[0]) - Date.parse(new Date());
-          const differenceObj = convertMs(difference);
-
-          if (difference < 1) {
-            clearInterval(timerId);
-          }
-
-          const { days, hours, minutes, seconds } = differenceObj;
-
-          daysEl.textContent = addLeadingZero(days);
-          hoursEl.textContent = addLeadingZero(hours);
-          minutesEl.textContent = addLeadingZero(minutes);
-          secondsEl.textContent = addLeadingZero(seconds);
-        }, 1000);
-      });
+      userTime = selectedDates[0];
     }
   },
 });
@@ -67,4 +52,41 @@ function convertMs(ms) {
 
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
+}
+
+startBtn.addEventListener('click', () => {
+  startBtn.setAttribute('disabled', 'true');
+  flatpickrEl.setAttribute('disabled', 'true');
+
+  timerId = setInterval(() => {
+    const difference = Date.parse(userTime) - Date.parse(new Date());
+    const differenceObj = convertMs(difference);
+
+    if (difference < 1) {
+      Notiflix.Notify.success('The time has come');
+      onTimerStop();
+    }
+
+    const { days, hours, minutes, seconds } = differenceObj;
+
+    daysEl.textContent = addLeadingZero(days);
+    hoursEl.textContent = addLeadingZero(hours);
+    minutesEl.textContent = addLeadingZero(minutes);
+    secondsEl.textContent = addLeadingZero(seconds);
+  }, 1000);
+});
+
+resetBtn.addEventListener('click', () => {
+  onTimerStop();
+
+  daysEl.textContent = '00';
+  hoursEl.textContent = '00';
+  minutesEl.textContent = '00';
+  secondsEl.textContent = '00';
+});
+
+function onTimerStop() {
+  clearInterval(timerId);
+  flatpickrEl.removeAttribute('disabled');
+  flatpickrTimer.setDate(new Date());
 }

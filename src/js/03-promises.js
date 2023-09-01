@@ -12,6 +12,11 @@ formEl.addEventListener('submit', e => {
   const delayN = Number(delayEl.value);
   const stepN = Number(stepEl.value);
 
+  if (amountN <= 0 || delayN < 0 || stepN < 0) {
+    Notiflix.Notify.failure(`❌ Please insert positive numbers`);
+    return;
+  }
+
   for (let i = 1; i <= amountN; i += 1) {
     let delays = delayN + stepN * (i - 1);
 
